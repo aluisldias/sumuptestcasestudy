@@ -1,0 +1,37 @@
+name: 'sumup'
+version: '1.0.0'
+config-version: 2
+
+profile: 'sumup' 
+
+model-paths: ["models"] 
+
+# The seed-paths tells dbt where to look for your .csv seed files (if you choose to use seeds).
+seed-paths: ["seeds"]
+
+# The test-paths tells dbt where to look for data tests.
+test-paths: ["tests"]
+
+# The target-path specifies where dbt should put compiled SQL and logs.
+target-path: "target"
+
+# The clean-targets specifies files to delete when you run 'dbt clean'.
+clean-targets:
+  - "target"
+  - "dbt_packages"
+  - "dbt_modules"
+
+# Configuration for models: defines schemas and materializations
+models:
+  sumup:
+    +schema: 'analytics'
+
+    staging:
+      +schema: 'staging' 
+      +materialized: view
+
+    core:
+      +materialized: table
+
+    marts:
+      +materialized: view

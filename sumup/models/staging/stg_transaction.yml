@@ -1,0 +1,48 @@
+version: 2
+
+models:
+  - name: stg_transaction
+    description: Seed table containing fully processed and PII-protected transaction data.
+
+    columns:
+      - name: id
+        description: The unique identifier for the transaction.
+        tests:
+          - unique
+          - not_null
+
+      - name: device_id
+        description: Foreign key linking to the device used.
+        tests:
+          - not_null
+          # Note: If you build a dim_devices model, add a 'relationships' test here
+
+      - name: amount_eur
+        description: The transaction amount converted to Euros (€).
+        tests:
+          - not_null
+          #struggling to setup a limiter for negative values, staying with the intention, dbt packages is not working locally
+
+      - name: status
+        description: The final status of the transaction (accepted, refused, or cancelled).
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['accepted', 'refused', 'cancelled'] # Check for valid, standardized states
+
+      - name: card_number # Test applied to the raw PII string
+        description: The raw card number string (including spaces/formatting).
+        tests:
+          - not_null
+          # FRAUD/INTEGRITY CHECK: Ensure card number length is plausible before processing. 
+          # Typically 13 to 19 digits, allowing for spaces/hyphens (e.g., max 25 chars).
+          - dbt_expectations.expect_column_value_lengths_to_be_between:
+              min_value: 13
+              max_value: 25 
+          # FRAUD CHECK: Look for obvious pattern issues (e.g., same card number recorded multiple times as non-numeric)
+          # same issue as mentioned before with dbt packages
+          #- dbt_expectations.expression_is_true:
+          #    expression: "NOT REGEXP_LIKE(REPLACE(REPLACE(card_number, ' ', ''), '-', ''), '^0+$')" # Should not be all zeros
+
+
+   

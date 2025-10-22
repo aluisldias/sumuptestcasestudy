@@ -1,0 +1,14 @@
+sumup: 
+  target: dev
+  outputs:
+    dev:
+      type: postgres # Specify your database adapter type
+      host: "{{ env_var('DB_HOST', 'localhost') }}" # Use environment variables for security/flexibility
+      user: "{{ env_var('DB_USER', 'postgres') }}"
+      password: "{{ env_var('DB_PASS', '12345678') }}" 
+      port: 5432
+      dbname: "{{ env_var('DB_NAME', 'postgres') }}"
+      schema: analytics # The default schema where final models (marts) will land
+      threads: 4 # Number of threads dbt can use for parallel execution
+      # You may need to specify the connection method if not using the default:
+      # keepalives_idle: 0
