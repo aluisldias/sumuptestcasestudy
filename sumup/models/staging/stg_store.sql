@@ -1,9 +1,3 @@
-{{
-    config(
-        materialized='view'
-    )
-}}
-
 SELECT
     -- Primary Key: Rename to be explicit
     id AS store_id,
@@ -14,7 +8,4 @@ SELECT
     country,
     city
     
-    -- Add a load timestamp/date if available in the raw data or ingestion process
-    -- '{{ run_started_at }}'::TIMESTAMP_NTZ AS dbt_loaded_at
-
 FROM {{ ref('store') }}
